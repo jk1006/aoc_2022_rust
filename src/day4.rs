@@ -1,50 +1,55 @@
-
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day4.txt"));
     println!("Solution day1_part1: {}", solve_part1(input.clone()));
     println!("Solution day1_part2: {}", solve_part2(input.clone()));
 }
 
-fn solve_part1(input: Vec<((usize,usize),(usize,usize))>) -> usize {
+fn solve_part1(input: Vec<((usize, usize), (usize, usize))>) -> usize {
     let mut result: usize = 0;
     for line in input {
-        if (line.0.0 <= line.1.0 && line.0.1 >= line.1.1)
-            || (line.1.0 <= line.0.0 && line.1.1 >= line.0.1) {
-                result += 1;
+        if (line.0 .0 <= line.1 .0 && line.0 .1 >= line.1 .1)
+            || (line.1 .0 <= line.0 .0 && line.1 .1 >= line.0 .1)
+        {
+            result += 1;
         }
     }
 
     result
 }
 
-fn solve_part2(input: Vec<((usize,usize),(usize,usize))>) -> usize {
+fn solve_part2(input: Vec<((usize, usize), (usize, usize))>) -> usize {
     let mut result: usize = 0;
 
     for line in input {
-        for i in line.0.0..line.0.1 + 1 {
-            if (line.1.0..line.1.1 + 1).contains(&i) {
+        for i in line.0 .0..line.0 .1 + 1 {
+            if (line.1 .0..line.1 .1 + 1).contains(&i) {
                 result += 1;
                 break;
             }
-        } 
+        }
     }
 
     result
 }
 
-fn split_input(input: &str) -> Vec<((usize,usize),(usize,usize))> {
-    let mut result: Vec<((usize, usize),(usize,usize))> = Vec::new();
-    let tmp: Vec<Vec<&str>> =input
+fn split_input(input: &str) -> Vec<((usize, usize), (usize, usize))> {
+    let mut result: Vec<((usize, usize), (usize, usize))> = Vec::new();
+    let tmp: Vec<Vec<&str>> = input
         .split("\n")
         .filter(|l| !l.is_empty())
         .map(|l| l.split(",").collect())
         .collect();
     for line in tmp {
-
-        let test1: Vec<usize> = line[0].split("-").map(|st| st.parse::<usize>().unwrap()).collect();
+        let test1: Vec<usize> = line[0]
+            .split("-")
+            .map(|st| st.parse::<usize>().unwrap())
+            .collect();
         let tuple1 = (test1[0], test1[1]);
 
-        let test2: Vec<usize> = line[1].split("-").map(|st| st.parse::<usize>().unwrap()).collect();
+        let test2: Vec<usize> = line[1]
+            .split("-")
+            .map(|st| st.parse::<usize>().unwrap())
+            .collect();
         let tuple2 = (test2[0], test2[1]);
         result.push((tuple1, tuple2));
     }

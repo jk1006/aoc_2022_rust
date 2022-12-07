@@ -1,0 +1,173 @@
+
+pub fn run() {
+    let input = include_str!("puzzle_inputs/day7.txt");
+    println!("Solution day1_part1: {}", solve_part1(input));
+    //println!("Solution day1_part2: {}", solve_part2(input.clone()));
+}
+
+struct FileSystem <'a> {
+    root_dir: &mut 'a Directory <'a>,
+    current_directory: &'a Directory <'a>,
+}
+
+impl FileSystem <'_> {
+    fn new(root: &str, root_dir: &Directory) -> Self {
+        Self {
+            current_directory: root_dir,
+            root_dir,
+        } 
+    }
+
+    fn change_directory(&mut self, dir: &str) {
+        println!("Changing dir to {}", dir);
+        let parent = self.current_directory.get_parent();
+        let subdirs = self.current_directory.get_subdirs().clone();
+        match dir {
+            ".." => self.current_directory = &parent.unwrap(),
+            "/" => println!("Changed to root"),
+            dir_name => {
+                println!("subdirs of {}: {:?}", self.current_directory.name, subdirs);
+                for dir in subdirs {
+                    if dir.name == dir_name {
+                        self.current_directory = &Box::new(&dir);
+                    }
+                }
+                
+            }
+        }
+    }
+
+    fn add_subdir(&mut self, dir_name: &str) {
+        println!("adding subdir {}", dir_name);
+        self.current_directory.add_subdir(dir_name);
+
+    }
+
+    fn add_file(&mut self, file_name: &str, size: usize) {
+        println!("adding file {}, size {} into dir {}", file_name, size, self.current_directory.name);
+        self.current_directory.add_file(file_name, size);
+    }
+    
+}
+
+#[derive(Clone, Debug)]
+struct File {
+    name: String,
+    size: usize,
+}
+
+#[derive(Clone, Debug)]
+struct Directory <'a> {
+    name: String,
+    files: Vec<File>,
+    subdirs: Vec<Directory <'a>>,
+    parent: Option<&'a Directory <'a> >,
+}
+
+impl <'a> Directory <'a> {
+    fn new(name: String, parent: Option<&Directory>) -> Self {
+        Self {
+            name,
+            files: Vec::new(),
+            subdirs: Vec::new(),
+            parent ,
+        }
+    }
+
+    fn get_parent(&self) -> Option<&Directory> {
+        self.parent
+    }
+
+    fn add_subdir(&mut self, dir_name: &str) {
+        let subdir = Directory::new(dir_name.to_string(), Some(self));
+        self.subdirs.push(subdir);
+    }
+
+    fn get_subdirs(&self) -> &Vec<Directory> {
+        &self.subdirs
+    }
+
+    fn add_file(&mut self, name: &str, size: usize) {
+        self.files.push(File {
+            name: name.to_string(),
+            size,
+        })
+    }
+}
+
+enum Command {
+    ChangeDirectory,
+    ListDirectoryEntries,
+}
+
+impl Command {
+    fn from_str(cmd: &str) -> Self {
+        match cmd {
+            "ls" => Command::ListDirectoryEntries,
+            "cd" => Command::ChangeDirectory,
+            _ => unreachable!(),
+        }
+    }
+}
+fn solve_part1(input: &str) -> usize {
+    let root_dir = Directory::new("/".to_string(), None);
+    let mut fs = FileSystem::new("/", &root_dir);
+    for line in input.lines() {
+       let mut split = line.split(" ");
+       match split.next().unwrap() {
+           "$" => {
+               match Command::from_str(split.next().unwrap()) {
+                   Command::ChangeDirectory => fs.change_directory(split.next().unwrap()),
+                   _ => println!("ls started"),
+               }
+           }
+           "dir" => fs.add_subdir(split.next().unwrap()),
+           number => fs.add_file(split.next().unwrap(), number.parse::<usize>().unwrap()),
+       }
+    }
+
+    0
+}
+
+fn solve_part2(mut input: Vec<usize>) -> usize {
+    input.sort();
+    return input.iter().rev().take(3).sum();
+}
+
+mod tests {
+    use crate::day7::*;
+    const TEST_INPUT: &str = "$ cd /
+$ ls
+dir a
+14848514 b.txt
+8504156 c.dat
+dir d
+$ cd a
+$ ls
+dir e
+29116 f
+2557 g
+62596 h.lst
+$ cd e
+$ ls
+584 i
+$ cd ..
+$ cd ..
+$ cd d
+$ ls
+4060174 j
+8033020 d.log
+5626152 d.ext
+7214296 k";
+
+    #[test]
+    fn day1_part1() {
+        assert_eq!(solve_part1(TEST_INPUT), 24000);
+    }
+
+    #[test]
+    fn day1_part2() {
+        //let input = split_input(TEST_INPUT);
+        //assert_eq!(solve_part2(input), 45000);
+    }
+}

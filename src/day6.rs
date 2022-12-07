@@ -7,16 +7,16 @@ pub fn run() {
 fn solve_part1(input: Vec<char>) -> usize {
     let mut last_4 = Vec::new();
     for (i, c) in input.into_iter().enumerate() {
-       last_4.push(c); 
-       if last_4.len() == 5 {
-           last_4.remove(0);
-           let mut tmp = last_4.clone();
-           tmp.sort();
-           tmp.dedup();
-           if tmp.len() == 4 {
-               return i + 1;
-           }
-       }
+        last_4.push(c);
+        if last_4.len() == 5 {
+            last_4.remove(0);
+            let mut tmp = last_4.clone();
+            tmp.sort();
+            tmp.dedup();
+            if tmp.len() == 4 {
+                return i + 1;
+            }
+        }
     }
     0
 }
@@ -24,24 +24,22 @@ fn solve_part1(input: Vec<char>) -> usize {
 fn solve_part2(mut input: Vec<char>) -> usize {
     let mut last_14 = Vec::new();
     for (i, c) in input.into_iter().enumerate() {
-       last_14.push(c); 
-       if last_14.len() == 15 {
-           last_14.remove(0);
-           let mut tmp = last_14.clone();
-           tmp.sort();
-           tmp.dedup();
-           if tmp.len() == 14 {
-               return i + 1;
-           }
-       }
+        last_14.push(c);
+        if last_14.len() == 15 {
+            last_14.remove(0);
+            let mut tmp = last_14.clone();
+            tmp.sort();
+            tmp.dedup();
+            if tmp.len() == 14 {
+                return i + 1;
+            }
+        }
     }
     0
 }
 
 fn split_input(input: &str) -> Vec<char> {
-    return input
-        .chars()
-        .collect();
+    return input.chars().collect();
 }
 
 mod tests {
