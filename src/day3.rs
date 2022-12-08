@@ -1,7 +1,7 @@
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day3.txt"));
     println!("Solution day3_part1: {}", solve_part1(input.clone()));
-    println!("Solution day3_part2: {}", solve_part2(input.clone()));
+    println!("Solution day3_part2: {}", solve_part2(input));
 }
 
 fn solve_part1(input: Vec<Vec<char>>) -> usize {
@@ -64,16 +64,17 @@ fn return_prio_for_uppercase_char(input: char) -> usize {
 }
 
 fn split_input(input: &str) -> Vec<Vec<char>> {
-    let lines: Vec<&str> = input.split("\n").collect();
-    return lines
-        .into_iter()
+    let lines = input.split('\n');
+    lines
         .filter(|l| !l.is_empty())
         .map(|l| l.chars().collect())
-        .collect();
+        .collect()
 }
 
 mod tests {
+    #[cfg(test)]
     use crate::day3::*;
+    #[cfg(test)]
     const TEST_INPUT: &str = "vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg

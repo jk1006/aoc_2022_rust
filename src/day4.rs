@@ -1,7 +1,7 @@
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day4.txt"));
-    println!("Solution day1_part1: {}", solve_part1(input.clone()));
-    println!("Solution day1_part2: {}", solve_part2(input.clone()));
+    println!("Solution day4_part1: {}", solve_part1(input.clone()));
+    println!("Solution day4_part2: {}", solve_part2(input));
 }
 
 fn solve_part1(input: Vec<((usize, usize), (usize, usize))>) -> usize {
@@ -35,19 +35,19 @@ fn solve_part2(input: Vec<((usize, usize), (usize, usize))>) -> usize {
 fn split_input(input: &str) -> Vec<((usize, usize), (usize, usize))> {
     let mut result: Vec<((usize, usize), (usize, usize))> = Vec::new();
     let tmp: Vec<Vec<&str>> = input
-        .split("\n")
+        .split('\n')
         .filter(|l| !l.is_empty())
-        .map(|l| l.split(",").collect())
+        .map(|l| l.split(',').collect())
         .collect();
     for line in tmp {
         let test1: Vec<usize> = line[0]
-            .split("-")
+            .split('-')
             .map(|st| st.parse::<usize>().unwrap())
             .collect();
         let tuple1 = (test1[0], test1[1]);
 
         let test2: Vec<usize> = line[1]
-            .split("-")
+            .split('-')
             .map(|st| st.parse::<usize>().unwrap())
             .collect();
         let tuple2 = (test2[0], test2[1]);
@@ -56,6 +56,7 @@ fn split_input(input: &str) -> Vec<((usize, usize), (usize, usize))> {
     result
 }
 
+#[cfg(test)]
 mod tests {
     use crate::day4::*;
     const TEST_INPUT: &str = "2-4,6-8

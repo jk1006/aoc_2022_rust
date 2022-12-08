@@ -1,7 +1,7 @@
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day5.txt"));
     println!("Solution day5_part1: {}", solve_part1(input.clone()));
-    println!("Solution day5_part2: {}", solve_part2(input.clone()));
+    println!("Solution day5_part2: {}", solve_part2(input));
 }
 
 #[derive(Clone, Debug)]
@@ -17,20 +17,14 @@ struct Stack {
     moves: Vec<Move>,
 }
 
-impl Stack {
-    fn add_move(&mut self, mv: Move) {
-        self.moves.push(mv);
-    }
-}
-
 fn solve_part1(mut input: Stack) -> String {
     for mv in input.moves {
         let vec_to_process = input.crates[mv.from - 1].clone();
         input.crates[mv.to - 1].append(
             &mut vec_to_process[vec_to_process.len() - mv.amount..]
-                .into_iter()
+                .iter()
                 .rev()
-                .map(|c| *c)
+                .copied()
                 .collect(),
         );
         if mv.amount == input.crates[mv.from - 1].len() {
@@ -50,10 +44,7 @@ fn solve_part2(mut input: Stack) -> String {
     for mv in input.moves {
         let vec_to_process = input.crates[mv.from - 1].clone();
         input.crates[mv.to - 1].append(
-            &mut vec_to_process[vec_to_process.len() - mv.amount..]
-                .into_iter()
-                .map(|c| *c)
-                .collect(),
+            &mut vec_to_process[vec_to_process.len() - mv.amount..].to_vec(),
         );
         if mv.amount == input.crates[mv.from - 1].len() {
             input.crates[mv.from - 1].clear();
@@ -74,11 +65,11 @@ fn split_input(input: &str) -> Stack {
     let moves = input_iter
         .next()
         .unwrap()
-        .split("\n")
+        .split('\n')
         .filter(|l| !l.is_empty())
         .map(create_move)
         .collect();
-    let mut lines: Vec<&str> = splitted.split("\n").collect();
+    let mut lines: Vec<&str> = splitted.split('\n').collect();
     let last_line = lines.remove(lines.len() - 1);
     let number_of_cols: usize = last_line
         .split("   ")
@@ -123,6 +114,7 @@ fn create_move(input: &str) -> Move {
     Move { amount, from, to }
 }
 
+#[cfg(test)]
 mod tests {
     use crate::day5::*;
     const TEST_INPUT: &str = "    [D]    

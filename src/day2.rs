@@ -22,11 +22,11 @@ pub fn run() {
     println!("Solution day2_part2: {}", solve(&input));
 }
 
-fn solve(input: &Vec<(Move, Move)>) -> usize {
-    return input
-        .into_iter()
+fn solve(input: &[(Move, Move)]) -> usize {
+    input
+        .iter()
         .map(|(m1, m2)| calculate_score(m1, m2) + m2.value() as usize)
-        .sum();
+        .sum()
 }
 
 fn calculate_score(enemy_move: &Move, my_move: &Move) -> usize {
@@ -40,9 +40,9 @@ fn calculate_score(enemy_move: &Move, my_move: &Move) -> usize {
 
 fn split_input(input: &str, part1: bool) -> Vec<(Move, Move)> {
     let mut result: Vec<(Move, Move)> = Vec::new();
-    let lines: Vec<&str> = input.split("\n").filter(|x| x != &"").collect();
+    let lines: Vec<&str> = input.split('\n').filter(|x| x != &"").collect();
     for l in lines {
-        let moves: Vec<String> = l.split(" ").map(|x| x.to_string()).collect();
+        let moves: Vec<String> = l.split(' ').map(|x| x.to_string()).collect();
         result.push((
             return_move_for_input(&moves[0]),
             if part1 {
@@ -95,7 +95,9 @@ fn return_move_for_input(move_input: &str) -> Move {
 }
 
 mod tests {
+    #[cfg(test)]
     use crate::day2::*;
+    #[cfg(test)]
     const TEST_INPUT: &str = "A Y
 B X
 C Z";

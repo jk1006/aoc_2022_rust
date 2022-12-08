@@ -1,28 +1,30 @@
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day1.txt"));
     println!("Solution day1_part1: {}", solve_part1(input.clone()));
-    println!("Solution day1_part2: {}", solve_part2(input.clone()));
+    println!("Solution day1_part2: {}", solve_part2(input));
 }
 
 fn solve_part1(input: Vec<usize>) -> usize {
-    return input.into_iter().max().unwrap_or(0);
+    input.into_iter().max().unwrap_or(0)
 }
 
 fn solve_part2(mut input: Vec<usize>) -> usize {
     input.sort();
-    return input.iter().rev().take(3).sum();
+    input.iter().rev().take(3).sum()
 }
 
 fn split_input(input: &str) -> Vec<usize> {
-    return input
+    input
         .split("\n\n")
         .map(|x| x.lines().map(|cals| cals.parse::<usize>().unwrap()).sum())
-        .collect();
+        .collect()
 }
 
 mod tests {
+    #[cfg(test)]
     use crate::day1::*;
-    const TEST_INPUT: &str = "1000
+#[cfg(test)]
+const TEST_INPUT: &str = "1000
 2000
 3000
 

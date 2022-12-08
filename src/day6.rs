@@ -1,7 +1,7 @@
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day6.txt"));
     println!("Solution day6_part1: {}", solve_part1(input.clone()));
-    println!("Solution day6_part2: {}", solve_part2(input.clone()));
+    println!("Solution day6_part2: {}", solve_part2(input));
 }
 
 fn solve_part1(input: Vec<char>) -> usize {
@@ -21,7 +21,7 @@ fn solve_part1(input: Vec<char>) -> usize {
     0
 }
 
-fn solve_part2(mut input: Vec<char>) -> usize {
+fn solve_part2(input: Vec<char>) -> usize {
     let mut last_14 = Vec::new();
     for (i, c) in input.into_iter().enumerate() {
         last_14.push(c);
@@ -42,6 +42,7 @@ fn split_input(input: &str) -> Vec<char> {
     return input.chars().collect();
 }
 
+#[cfg(test)]
 mod tests {
     use crate::day6::*;
     const TEST_INPUT1: &str = "bvwbjplbgvbhsrlpgdmjqwftvncz";
