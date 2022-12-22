@@ -16,7 +16,7 @@ impl Instruction {
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day10.txt"));
     println!("Solution day10_part1: {}", solve_part1(input.clone()));
-    //println!("Solution day10_part2: {}", solve_part2(input));
+    println!("Solution day10_part2: {}", solve_part2(input));
 }
 
 fn solve_part1(input: Vec<Instruction>) -> i32 {
@@ -52,9 +52,31 @@ fn solve_part1(input: Vec<Instruction>) -> i32 {
     result
 }
 
-fn solve_part2(mut input: Vec<usize>) -> usize {
-    input.sort();
-    input.iter().rev().take(3).sum()
+fn solve_part2(mut input: Vec<Instruction>) -> String {
+   let board = vec![vec!['.';40];6]; 
+   let mut current_cycle = 1;
+   let mut cycles_instruction_finished = 0;
+   let mut sprite_middle = 1;
+   let mut value_to_add = 0;
+   for instruction in input {
+       match instruction {
+        Instruction::Add(value) => {
+            value_to_add = value;
+            cycles_instruction_finished = 2;
+            current_cycle += 1;
+        },
+        Instruction::Noop => {
+           if cycles_instruction_finished > 0 {
+            cycles_instruction_finished -= 1;
+           }
+        }
+       } 
+       if cycles_instruction_finished == 0 {
+        
+       }
+   }
+
+    "".to_string()
 }
 
 fn split_input(input: &str) -> Vec<Instruction> {
@@ -235,6 +257,12 @@ noop";
     #[test]
     fn day10_part2() {
         let input = split_input(TEST_INPUT);
-        //        assert_eq!(solve_part2(input), 45000);
+        let expected = "##..##..##..##..##..##..##..##..##..##..
+        ###...###...###...###...###...###...###.
+        ####....####....####....####....####....
+        #####.....#####.....#####.....#####.....
+        ######......######......######......####
+        #######.......#######.......#######.....";
+        assert_eq!(solve_part2(input), expected.to_string());
     }
 }
