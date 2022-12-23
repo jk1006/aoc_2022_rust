@@ -25,9 +25,9 @@ fn solve_part1(mut input: Vec<Monkey>) -> u64 {
             let mut items_to_throw: Vec<(i32, u64)> = Vec::new();
             for item in &monkey.items {
                 monkey.items_inspected += 1;
-                items_to_be_deleted.push(item.clone());
-                let mut new_item_value = (monkey.operation)(&item);
-                new_item_value = new_item_value / 3;
+                items_to_be_deleted.push(*item);
+                let mut new_item_value = (monkey.operation)(item);
+                new_item_value /= 3;
                 items_to_throw.push(((monkey.throw)(&new_item_value) as i32, new_item_value));
             }
             for i in items_to_be_deleted {
@@ -37,7 +37,7 @@ fn solve_part1(mut input: Vec<Monkey>) -> u64 {
             }
             for (id, item_val) in items_to_throw {
                 let index_target_monkey = input.iter().position(|m| m.id == id).unwrap();
-                let mon = input.iter_mut().nth(index_target_monkey).unwrap();
+                let mon = input.get_mut(index_target_monkey).unwrap();
                 mon.items.push(item_val);
             }
         }
@@ -45,25 +45,21 @@ fn solve_part1(mut input: Vec<Monkey>) -> u64 {
 
     let mut inspected: Vec<u64> = input.iter().map(|m| m.items_inspected).collect();
     inspected.sort();
-    inspected
-        .into_iter()
-        .rev()
-        .take(2)
-        .fold(1, |acc, x| acc * x)
+    inspected.into_iter().rev().take(2).product()
 }
 
 fn solve_part2(mut input: Vec<Monkey>) -> u64 {
     let round = 10000;
-    let kgv = input.iter().map(|m| m.div_by).fold(1, |acc, x| acc * x) as u64;
-    for r in 0..round {
+    let kgv = input.iter().map(|m| m.div_by).product::<usize>() as u64;
+    for _ in 0..round {
         for i in 0..input.len() {
             let monkey = &mut input[i];
             let mut items_to_be_deleted: Vec<u64> = Vec::new();
             let mut items_to_throw: Vec<(usize, u64)> = Vec::new();
             for item in &monkey.items {
                 monkey.items_inspected += 1;
-                items_to_be_deleted.push(item.clone());
-                let new_item_value = (monkey.operation)(&item) % kgv;
+                items_to_be_deleted.push(*item);
+                let new_item_value = (monkey.operation)(item) % kgv;
                 items_to_throw.push(((monkey.throw)(&new_item_value), new_item_value));
             }
             for i in items_to_be_deleted {
@@ -73,7 +69,7 @@ fn solve_part2(mut input: Vec<Monkey>) -> u64 {
             }
             for (id, item_val) in items_to_throw {
                 let index_target_monkey = input.iter().position(|m| m.id == id as i32).unwrap();
-                let mon = input.iter_mut().nth(index_target_monkey).unwrap();
+                let mon = input.get_mut(index_target_monkey).unwrap();
                 mon.items.push(item_val);
             }
         }
@@ -81,11 +77,7 @@ fn solve_part2(mut input: Vec<Monkey>) -> u64 {
 
     let mut inspected: Vec<u64> = input.iter().map(|m| m.items_inspected).collect();
     inspected.sort();
-    inspected
-        .into_iter()
-        .rev()
-        .take(2)
-        .fold(1, |acc, x| acc * x)
+    inspected.into_iter().rev().take(2).product()
 }
 
 fn split_input(input: &str) -> Vec<Monkey> {
@@ -142,17 +134,17 @@ fn parse_operation(line: &str) -> Op {
     match second_param {
         "old" => {
             if operator == '*' {
-                return Box::new(|x| x.clone() * x.clone());
+                Box::new(|x| x * x)
             } else {
-                return Box::new(|x| x.clone() + x.clone());
+                Box::new(|x| x + x)
             }
         }
         v => {
             let value = v.parse::<u64>().unwrap();
             if operator == '*' {
-                return Box::new(move |x| x * value.clone());
+                Box::new(move |x| x * value)
             } else {
-                return Box::new(move |x| x + value);
+                Box::new(move |x| x + value)
             }
         }
     }
@@ -191,13 +183,13 @@ Monkey 3:
     If false: throw to monkey 1";
 
     #[test]
-    fn day1_part1() {
+    fn day11_part1() {
         let input = split_input(TEST_INPUT);
         assert_eq!(solve_part1(input), 10605);
     }
 
     #[test]
-    fn day1_part2() {
+    fn day11_part2() {
         let input = split_input(TEST_INPUT);
         assert_eq!(solve_part2(input), 2713310158);
     }

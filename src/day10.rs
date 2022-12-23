@@ -4,15 +4,6 @@ enum Instruction {
     Add(i32),
 }
 
-impl Instruction {
-    fn get_value(&self) -> i32 {
-        match self {
-            Instruction::Add(value) => *value,
-            _ => 0,
-        }
-    }
-}
-
 pub fn run() {
     let input = split_input(include_str!("puzzle_inputs/day10.txt"));
     println!("Solution day10_part1: {}", solve_part1(input.clone()));
@@ -85,16 +76,16 @@ fn solve_part2(mut input: Vec<Instruction>) -> String {
     let mut result = "".to_string();
     for line in board {
         result.push_str(&line.iter().cloned().collect::<String>());
-        result.push_str("\n");
+        result.push('\n');
     }
     result
 }
 
 fn split_input(input: &str) -> Vec<Instruction> {
     input
-        .split("\n")
+        .split('\n')
         .filter(|x| !x.is_empty())
-        .map(|x| create_instcution_from_str(x))
+        .map(create_instcution_from_str)
         .collect()
 }
 

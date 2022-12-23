@@ -25,22 +25,6 @@ impl Grid {
             positions_visited_by_tail: vec![(5000, 5000)],
         }
     }
-
-    fn to_string(&self) -> String {
-        let line = vec!['.'; 26];
-        let mut lines = vec![line; 21];
-        lines[self.position_head.1][self.position_head.0] = 'H';
-        for (i, tail) in self.positions_tails.iter().enumerate() {
-            if lines[tail.1][tail.0] == '.' {
-                lines[tail.1][tail.0] = char::from_digit((i + 1) as u32, 10).unwrap();
-            }
-        }
-        let mut result = "".to_string();
-        for line in lines {
-            result.push_str(&(line.iter().cloned().collect::<String>() + "\n"));
-        }
-        result
-    }
 }
 
 pub fn run() {
@@ -81,12 +65,11 @@ fn move_head_right(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         grid.position_head.0 += 1;
         for i in 0..grid.positions_tails.len() {
-            let mut position_head = (0, 0);
-            if i == 0 {
-                position_head = grid.position_head;
+            let position_head = if i == 0 {
+                grid.position_head
             } else {
-                position_head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let position_tail = grid.positions_tails[i];
             grid.positions_tails[i] = calculate_new_position(position_head, position_tail);
         }
@@ -98,12 +81,11 @@ fn move_head_left(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         grid.position_head.0 -= 1;
         for i in 0..grid.positions_tails.len() {
-            let mut position_head = (0, 0);
-            if i == 0 {
-                position_head = grid.position_head;
+            let position_head = if i == 0 {
+                grid.position_head
             } else {
-                position_head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let position_tail = grid.positions_tails[i];
             grid.positions_tails[i] = calculate_new_position(position_head, position_tail);
         }
@@ -115,12 +97,11 @@ fn move_head_down(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         grid.position_head.1 += 1;
         for i in 0..grid.positions_tails.len() {
-            let mut position_head = (0, 0);
-            if i == 0 {
-                position_head = grid.position_head;
+            let position_head = if i == 0 {
+                grid.position_head
             } else {
-                position_head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let position_tail = grid.positions_tails[i];
             grid.positions_tails[i] = calculate_new_position(position_head, position_tail);
         }
@@ -132,12 +113,11 @@ fn move_head_up(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         grid.position_head.1 -= 1;
         for i in 0..grid.positions_tails.len() {
-            let mut position_head = (0, 0);
-            if i == 0 {
-                position_head = grid.position_head;
+            let position_head = if i == 0 {
+                grid.position_head
             } else {
-                position_head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let position_tail = grid.positions_tails[i];
             grid.positions_tails[i] = calculate_new_position(position_head, position_tail);
         }
@@ -175,13 +155,12 @@ fn calculate_new_position(
 fn move_up(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         for i in 0..grid.positions_tails.len() {
-            let mut head = (0, 0);
-            if i == 0 {
+            let head = if i == 0 {
                 grid.position_head.1 -= 1;
-                head = grid.position_head;
+                grid.position_head
             } else {
-                head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let mut tail = grid.positions_tails[i];
             if i == 0 {
                 grid.position_head = head;
@@ -201,13 +180,12 @@ fn move_up(grid: &mut Grid, amount: usize) {
 fn move_down(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         for i in 0..grid.positions_tails.len() {
-            let mut head = (0, 0);
-            if i == 0 {
+            let head = if i == 0 {
                 grid.position_head.1 += 1;
-                head = grid.position_head;
+                grid.position_head
             } else {
-                head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let mut tail = grid.positions_tails[i];
             if i == 0 {
                 grid.position_head = head;
@@ -227,13 +205,12 @@ fn move_down(grid: &mut Grid, amount: usize) {
 fn move_left(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         for i in 0..grid.positions_tails.len() {
-            let mut head = (0, 0);
-            if i == 0 {
+            let head = if i == 0 {
                 grid.position_head.0 -= 1;
-                head = grid.position_head;
+                grid.position_head
             } else {
-                head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let mut tail = grid.positions_tails[i];
             if i == 0 {
                 grid.position_head = head;
@@ -254,13 +231,12 @@ fn move_left(grid: &mut Grid, amount: usize) {
 fn move_right(grid: &mut Grid, amount: usize) {
     for _ in 0..amount {
         for i in 0..grid.positions_tails.len() {
-            let mut head = (0, 0);
-            if i == 0 {
+            let head = if i == 0 {
                 grid.position_head.0 += 1;
-                head = grid.position_head;
+                grid.position_head
             } else {
-                head = grid.positions_tails[i - 1];
-            }
+                grid.positions_tails[i - 1]
+            };
             let mut tail = grid.positions_tails[i];
             if i == 0 {
                 grid.position_head = head;
