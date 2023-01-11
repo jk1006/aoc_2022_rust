@@ -3,6 +3,7 @@ use petgraph::{
     algo::dijkstra,
     dot::{Config, Dot},
 };
+type Edge = Vec<((usize,usize,char),(usize,usize,char))>;
 #[derive(Debug, Clone)]
 struct Node {
     pos: (usize, usize),
@@ -41,9 +42,11 @@ pub fn run() {
 }
 
 fn solve_part1(input: Board) -> usize {
-    let start = input.start;
+    let start = (input.start.1, input.start.0);
     ///let start = (4, 0);
-    calculate_shortest_path(input, start).unwrap()
+    let edges = create_edges(&input);
+    let graph = DiGraphMap::<(usize, usize, char), ()>::from_edges(edges);
+    calculate_shortest_path(input, start, &graph).unwrap()
 }
 
 fn solve_part2(mut input: Board) -> usize {
@@ -55,17 +58,19 @@ fn solve_part2(mut input: Board) -> usize {
         .filter(|node| node.c == 'a')
         .map(|node| node.pos)
         .collect();
-
+    
+    let edges = create_edges(&input);
+    let graph = DiGraphMap::<(usize, usize, char), ()>::from_edges(edges);
     let x: Vec<usize> = starting_positions
         .iter()
-        .filter_map(|pos| calculate_shortest_path(input.clone(), (pos.1, pos.0)))
+        .filter_map(|pos| calculate_shortest_path(input.clone(), (pos.1, pos.0), &graph))
         .collect();
-    println!("{:?}", x);
     *x.iter().min().unwrap()
 }
 
-fn calculate_shortest_path(input: Board, start: (usize, usize)) -> Option<usize> {
-    let mut edges: Vec<((usize, usize, char), (usize, usize, char))> = Vec::new();
+fn create_edges(input: &Board) -> Edge {
+
+    let mut edges: Edge = Vec::new();
     for i in 0..input.board.len() {
         for j in 0..input.board[0].len() {
             let mut current_edges: Vec<((usize, usize, char), (usize, usize, char))> = Vec::new();
@@ -86,22 +91,18 @@ fn calculate_shortest_path(input: Board, start: (usize, usize)) -> Option<usize>
             edges.append(&mut current_edges.clone());
         }
     }
+    edges
+}
 
-    if start == (4, 0) {
-        println!("for 4,0: {:?}", edges);
-    }
-    let graph = DiGraphMap::<(usize, usize, char), ()>::from_edges(edges);
+
+fn calculate_shortest_path(input: Board, start: (usize, usize), graph: &GraphMap<(usize, usize, char), (), Directed>) -> Option<usize> {
     let res = dijkstra(
         &graph,
-        (start.1, start.0, 'a'),
+        (start.0, start.1, 'a'),
         Some((input.finish.1, input.finish.0, '{')),
         |_| 1,
     );
     if res.contains_key(&(input.finish.1, input.finish.0, '{')) {
-        println!(
-            "calculated: {}",
-            res[&(input.finish.1, input.finish.0, '{')]
-        );
         Some(res[&(input.finish.1, input.finish.0, '{')])
     } else {
         None
