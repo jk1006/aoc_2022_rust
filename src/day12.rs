@@ -41,14 +41,30 @@ pub fn run() {
 }
 
 fn solve_part1(input: Board) -> usize {
-    calculate_shortest_path(input)
+    let start = input.start;
+    ///let start = (4, 0);
+    calculate_shortest_path(input, start).unwrap()
 }
 
-fn solve_part2(input: Board) -> usize {
-    0
+fn solve_part2(mut input: Board) -> usize {
+    input.board[input.start.1][input.start.0].c = 'a';
+    let starting_positions: Vec<(usize, usize)> = input
+        .board
+        .iter()
+        .flatten()
+        .filter(|node| node.c == 'a')
+        .map(|node| node.pos)
+        .collect();
+
+    let x: Vec<usize> = starting_positions
+        .iter()
+        .filter_map(|pos| calculate_shortest_path(input.clone(), (pos.1, pos.0)))
+        .collect();
+    println!("{:?}", x);
+    *x.iter().min().unwrap()
 }
 
-fn calculate_shortest_path(input: Board) -> usize {
+fn calculate_shortest_path(input: Board, start: (usize, usize)) -> Option<usize> {
     let mut edges: Vec<((usize, usize, char), (usize, usize, char))> = Vec::new();
     for i in 0..input.board.len() {
         for j in 0..input.board[0].len() {
@@ -71,15 +87,25 @@ fn calculate_shortest_path(input: Board) -> usize {
         }
     }
 
+    if start == (4, 0) {
+        println!("for 4,0: {:?}", edges);
+    }
     let graph = DiGraphMap::<(usize, usize, char), ()>::from_edges(edges);
     let res = dijkstra(
         &graph,
-        (input.start.1, input.start.0, '`'),
+        (start.1, start.0, 'a'),
         Some((input.finish.1, input.finish.0, '{')),
         |_| 1,
     );
-
-    res[&(input.finish.1, input.finish.0, '{')]
+    if res.contains_key(&(input.finish.1, input.finish.0, '{')) {
+        println!(
+            "calculated: {}",
+            res[&(input.finish.1, input.finish.0, '{')]
+        );
+        Some(res[&(input.finish.1, input.finish.0, '{')])
+    } else {
+        None
+    }
 }
 
 fn split_input(input: &str) -> Board {
@@ -97,7 +123,7 @@ fn split_input(input: &str) -> Board {
             match board[i][j] {
                 'S' => {
                     start = (j, i);
-                    board[i][j] = '`';
+                    board[i][j] = 'a';
                 }
                 'E' => {
                     finish = (j, i);
